@@ -1,0 +1,78 @@
+
+
+DROP TABLE IF EXISTS `User`;
+CREATE TABLE IF NOT EXISTS `User` (
+  `_id` INT NOT NULL AUTO_INCREMENT,
+  `clerkId` VARCHAR(255) NOT NULL,
+  `email` VARCHAR(255) NOT NULL,
+  `name` CHAR(200) NOT NULL,
+  `imageUrl`VARCHAR(1000) DEFAULT NULL,
+  `stripeCustomerId`VARCHAR(255) NOT NULL,
+  `timestamps` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`_id`),
+  UNIQUE KEY crt_cid (clerkId)
+) ENGINE=InnoDB;
+
+DROP TABLE IF EXISTS `Address`;
+CREATE TABLE IF NOT EXISTS `Address` (
+  `_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `clerkId` VARCHAR(255) NOT NULL,
+  `label` VARCHAR(500) NOT NULL,
+  `fullName` VARCHAR(255) NOT NULL,
+  `streetAddress` VARCHAR(255) NOT NULL,
+  `city` VARCHAR(255) NOT NULL,
+  `state` CHAR(100) NOT NULL,
+  `zipCode`  CHAR(50) NOT NULL,
+  `phoneNumber`  CHAR(100) NOT NULL,
+  `isDefault` BOOLEAN DEFAULT FALSE,
+  PRIMARY KEY (`_id`),
+  UNIQUE KEY crt_cid (clerkId)
+) ENGINE=InnoDB;
+
+DROP TABLE IF EXISTS `Wishlist`;
+CREATE TABLE IF NOT EXISTS `Wishlist` (
+  `_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `clerkId` VARCHAR(255) NOT NULL,
+  `timestamps` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`_id`),
+  UNIQUE KEY crt_cid (clerkId)
+) ENGINE=InnoDB;
+
+
+DROP TABLE IF EXISTS `Product`;
+CREATE TABLE IF NOT EXISTS `Product` (
+  `_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(1000) DEFAULT NULL,
+  `description` VARCHAR(1000) DEFAULT NULL,
+  `price` DECIMAL(10,2) DEFAULT NULL,
+  `stock` INT DEFAULT NULL,
+  `category` CHAR(250) DEFAULT NULL,
+  `images` VARCHAR(1000) DEFAULT NULL,
+  `averageRating` DECIMAL(2,2) DEFAULT NULL,
+  `totalReviews` DECIMAL(2,2) DEFAULT NULL,
+  `timestamps` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`_id`),
+  KEY `pid_name` (`name`) ,
+  FULLTEXT `pid_f_ndc` (name, description, category)
+) ENGINE=InnoDB;
+
+DROP TABLE IF EXISTS `Cart`;
+CREATE TABLE IF NOT EXISTS `Cart` (
+  `_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `clerkId` VARCHAR(255) NOT NULL,
+  `timestamps` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`_id`),
+  UNIQUE KEY crt_cid (clerkId)
+) ENGINE=InnoDB;
+
+DROP TABLE IF EXISTS `CartItem`;
+CREATE TABLE IF NOT EXISTS `CartItem` (
+  `_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `Cart_id` BIGINT UNSIGNED NOT NULL,
+  `Product_id` BIGINT UNSIGNED NOT NULL,
+  `quantity` INT DEFAULT 1,
+  PRIMARY KEY (`_id`),
+  KEY `citm_cri` (Cart_id),
+  KEY `citm_pdi` (Product_id)
+) ENGINE=InnoDB;
+

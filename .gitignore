@@ -1,0 +1,13 @@
+# Menyembunyikan folder dependency Composer
+# Tambahkan "/" di depan untuk path spesifik misal "/api/vendor/"
+# tanpa "/" di depan berarti menerapkan pada semua folder "vendor"
+vendor/
+
+# Menyembunyikan file environment (mengandung password/API key rahasia)
+.env
+.env.local
+
+# Menyembunyikan cache dan log IDE/Editor
+.idea/
+.vscode/
+*.log

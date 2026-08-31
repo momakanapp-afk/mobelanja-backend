@@ -1,0 +1,120 @@
+[Running] php "e:\VHOST\mobelanja-app\backend\api\openfood_code_async.php"
+{
+    "total_requested": 3,
+    "data": {
+        "8991002101630": {
+            "code": "8991002101630",
+            "product_name": "ABC kopi susu",
+            "brands": "ABC",
+            "keywords": [
+                "abc",
+                "halal",
+                "kopi",
+                "susu"
+            ],
+            "images": {
+                "front": "https:\/\/images.openfoodfacts.org\/images\/products\/899\/100\/210\/1630\/front_id.5.400.jpg",
+                "gallery": {
+                    "front": {
+                        "display": {
+                            "en": "https:\/\/images.openfoodfacts.org\/images\/products\/899\/100\/210\/1630\/front_en.8.400.jpg",
+                            "id": "https:\/\/images.openfoodfacts.org\/images\/products\/899\/100\/210\/1630\/front_id.5.400.jpg"
+                        },
+                        "small": {
+                            "en": "https:\/\/images.openfoodfacts.org\/images\/products\/899\/100\/210\/1630\/front_en.8.200.jpg",
+                            "id": "https:\/\/images.openfoodfacts.org\/images\/products\/899\/100\/210\/1630\/front_id.5.200.jpg"
+                        },
+                        "thumb": {
+                            "en": "https:\/\/images.openfoodfacts.org\/images\/products\/899\/100\/210\/1630\/front_en.8.100.jpg",
+                            "id": "https:\/\/images.openfoodfacts.org\/images\/products\/899\/100\/210\/1630\/front_id.5.100.jpg"
+                        }
+                    },
+                    "ingredients": {
+                        "display": {
+                            "en": "https:\/\/images.openfoodfacts.org\/images\/products\/899\/100\/210\/1630\/ingredients_en.10.400.jpg"
+                        },
+                        "small": {
+                            "en": "https:\/\/images.openfoodfacts.org\/images\/products\/899\/100\/210\/1630\/ingredients_en.10.200.jpg"
+                        },
+                        "thumb": {
+                            "en": "https:\/\/images.openfoodfacts.org\/images\/products\/899\/100\/210\/1630\/ingredients_en.10.100.jpg"
+                        }
+                    },
+                    "nutrition": {
+                        "display": {
+                            "en": "https:\/\/images.openfoodfacts.org\/images\/products\/899\/100\/210\/1630\/nutrition_en.12.400.jpg"
+                        },
+                        "small": {
+                            "en": "https:\/\/images.openfoodfacts.org\/images\/products\/899\/100\/210\/1630\/nutrition_en.12.200.jpg"
+                        },
+                        "thumb": {
+                            "en": "https:\/\/images.openfoodfacts.org\/images\/products\/899\/100\/210\/1630\/nutrition_en.12.100.jpg"
+                        }
+                    }
+                }
+            }
+        },
+        "8992933465112": {
+            "code": "8992933465112",
+            "product_name": "Nutrijel puding susu stroberi",
+            "brands": "forisa",
+            "keywords": [
+                "forisa",
+                "nutrijel",
+                "puding",
+                "stroberi",
+                "susu"
+            ],
+            "images": {
+                "front": "https:\/\/images.openfoodfacts.org\/images\/products\/899\/293\/346\/5112\/front_en.4.400.jpg",
+                "gallery": {
+                    "front": {
+                        "display": {
+                            "en": "https:\/\/images.openfoodfacts.org\/images\/products\/899\/293\/346\/5112\/front_en.4.400.jpg"
+                        },
+                        "small": {
+                            "en": "https:\/\/images.openfoodfacts.org\/images\/products\/899\/293\/346\/5112\/front_en.4.200.jpg"
+                        },
+                        "thumb": {
+                            "en": "https:\/\/images.openfoodfacts.org\/images\/products\/899\/293\/346\/5112\/front_en.4.100.jpg"
+                        }
+                    }
+                }
+            }
+        },
+        "8997025914042": {
+            "code": "8997025914042",
+            "product_name": "Marie susu",
+            "brands": "ASW foods",
+            "keywords": [
+                "asw",
+                "biskuit",
+                "food",
+                "halal",
+                "marie",
+                "susu"
+            ],
+            "images": {
+                "front": "https:\/\/images.openfoodfacts.org\/images\/products\/899\/702\/591\/4042\/front_en.8.400.jpg",
+                "gallery": {
+                    "front": {
+                        "display": {
+                            "en": "https:\/\/images.openfoodfacts.org\/images\/products\/899\/702\/591\/4042\/front_en.8.400.jpg",
+                            "in": "https:\/\/images.openfoodfacts.org\/images\/products\/899\/702\/591\/4042\/front_in.4.400.jpg"
+                        },
+                        "small": {
+                            "en": "https:\/\/images.openfoodfacts.org\/images\/products\/899\/702\/591\/4042\/front_en.8.200.jpg",
+                            "in": "https:\/\/images.openfoodfacts.org\/images\/products\/899\/702\/591\/4042\/front_in.4.200.jpg"
+                        },
+                        "thumb": {
+                            "en": "https:\/\/images.openfoodfacts.org\/images\/products\/899\/702\/591\/4042\/front_en.8.100.jpg",
+                            "in": "https:\/\/images.openfoodfacts.org\/images\/products\/899\/702\/591\/4042\/front_in.4.100.jpg"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+[Done] exited with code=0 in 2.547 seconds
+
