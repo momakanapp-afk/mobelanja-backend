@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS `User` (
   `stripeCustomerId`VARCHAR(255) NOT NULL,
   `timestamps` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`_id`),
-  UNIQUE KEY crt_cid (clerkId)
+  UNIQUE KEY usr_cid (clerkId)
 ) ENGINE=InnoDB;
 
 DROP TABLE IF EXISTS `Address`;
@@ -22,26 +22,31 @@ CREATE TABLE IF NOT EXISTS `Address` (
   `streetAddress` VARCHAR(255) NOT NULL,
   `city` VARCHAR(255) NOT NULL,
   `state` CHAR(100) NOT NULL,
+  `geoloc` VARCHAR(255) NOT NULL,
   `zipCode`  CHAR(50) NOT NULL,
   `phoneNumber`  CHAR(100) NOT NULL,
   `isDefault` BOOLEAN DEFAULT FALSE,
   PRIMARY KEY (`_id`),
-  UNIQUE KEY crt_cid (clerkId)
+  UNIQUE KEY adrs_cid (clerkId)
 ) ENGINE=InnoDB;
 
 DROP TABLE IF EXISTS `Wishlist`;
 CREATE TABLE IF NOT EXISTS `Wishlist` (
   `_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `clerkId` VARCHAR(255) NOT NULL,
+  `Product_id` BIGINT UNSIGNED NOT NULL,
   `timestamps` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`_id`),
-  UNIQUE KEY crt_cid (clerkId)
+  UNIQUE KEY wsh_cid (clerkId),
+  KEY wsh_pid (Product_id)
 ) ENGINE=InnoDB;
 
 
 DROP TABLE IF EXISTS `Product`;
 CREATE TABLE IF NOT EXISTS `Product` (
   `_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `Toko_id` INT UNSIGNED DEFAULT NULL,
+  `barcode` VARCHAR(255) DEFAULT NULL,
   `name` VARCHAR(1000) DEFAULT NULL,
   `description` VARCHAR(1000) DEFAULT NULL,
   `price` DECIMAL(10,2) DEFAULT NULL,
@@ -52,9 +57,26 @@ CREATE TABLE IF NOT EXISTS `Product` (
   `totalReviews` DECIMAL(2,2) DEFAULT NULL,
   `timestamps` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`_id`),
-  KEY `pid_name` (`name`) ,
-  FULLTEXT `pid_f_ndc` (name, description, category)
+  KEY `pid_tid` (`Toko_id`) ,
+  KEY `pid_brc` (`barcode`) ,
+  FULLTEXT `pid_f_ndc` (`name`,`description`,`category`)
 ) ENGINE=InnoDB;
+
+
+DROP TABLE IF EXISTS `Toko`;
+CREATE TABLE IF NOT EXISTS `Toko` (
+  `_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `clerkId` VARCHAR(255) NOT NULL,
+  `name` VARCHAR(255) NOT NULL,
+  `kotakab` VARCHAR(255) NOT NULL,
+  `geoloc` VARCHAR(255) NOT NULL,
+  `desc` TEXT NOT NULL,
+  `timestamps` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`_id`),
+  UNIQUE KEY tko_cid (clerkId),
+  FULLTEXT `tko_f_ndc` (`name`, `desc`)
+) ENGINE=InnoDB;
+
 
 DROP TABLE IF EXISTS `Cart`;
 CREATE TABLE IF NOT EXISTS `Cart` (

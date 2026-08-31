@@ -1,0 +1,60 @@
+[
+    {
+        "code": "8992775315057",
+        "product_name": "Gery Salut cracker chocolate",
+        "brands": "Garuda food",
+        "keywords": [
+            "chocolate",
+            "cracker",
+            "food",
+            "garuda",
+            "gery",
+            "salut"
+        ],
+        "images": {
+            "front": "https:\/\/images.openfoodfacts.org\/images\/products\/899\/277\/531\/5057\/front_en.9.400.jpg",
+            "gallery": {
+                "front": {
+                    "display": {
+                        "en": "https:\/\/images.openfoodfacts.org\/images\/products\/899\/277\/531\/5057\/front_en.9.400.jpg"
+                    },
+                    "small": {
+                        "en": "https:\/\/images.openfoodfacts.org\/images\/products\/899\/277\/531\/5057\/front_en.9.200.jpg"
+                    },
+                    "thumb": {
+                        "en": "https:\/\/images.openfoodfacts.org\/images\/products\/899\/277\/531\/5057\/front_en.9.100.jpg"
+                    }
+                }
+            }
+        }
+    },
+    {
+        "code": "8990044000086",
+        "product_name": "Pocky Cookies & Cream",
+        "brands": "Glico",
+        "keywords": [
+            "cookie",
+            "cream",
+            "glico",
+            "halal",
+            "pocky"
+        ],
+        "images": {
+            "front": "https:\/\/images.openfoodfacts.org\/images\/products\/899\/004\/400\/0086\/front_en.5.400.jpg",
+            "gallery": {
+                "front": {
+                    "display": {
+                        "en": "https:\/\/images.openfoodfacts.org\/images\/products\/899\/004\/400\/0086\/front_en.5.400.jpg"
+                    },
+                    "small": {
+                        "en": "https:\/\/images.openfoodfacts.org\/images\/products\/899\/004\/400\/0086\/front_en.5.200.jpg"
+                    },
+                    "thumb": {
+                        "en": "https:\/\/images.openfoodfacts.org\/images\/products\/899\/004\/400\/0086\/front_en.5.100.jpg"
+                    }
+                }
+            }
+        }
+    }
+]
+

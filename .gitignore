@@ -11,3 +11,5 @@ vendor/
 .idea/
 .vscode/
 *.log
+
+insert_credential.php
