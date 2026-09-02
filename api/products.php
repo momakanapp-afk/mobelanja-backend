@@ -27,11 +27,32 @@ $clerkUserId = $userToken->sub;  // Subject ID unik dari Clerk (contoh: "user_2N
 // SUCCESS TEST !
 // user_3IZkCyaT8suoAKJYva3hEOsPlsA
 
-$hs = $db->query('
-  SELECT * FROM product 
-  ORDER BY _id DESC
-  LIMIT 100
-');
+// Dipanggil dengan POST 
+$rawInput = file_get_contents('php://input');
+$_POST = json_decode($rawInput, true);
+
+if (!isset($_POST['searchq'])) {
+  // Ambil 100 data terbaru
+  $qry = 'SELECT * FROM product ORDER BY _id DESC LIMIT 100';
+  $hs = $db->query($qry);
+}
+else {
+  // Pencarian fulltext index 
+  $qry = "
+  SELECT p.*, 
+  MATCH(name,description,category) AGAINST(? IN BOOLEAN MODE) AS skorcari 
+  FROM product AS p 
+  WHERE MATCH(name,description,category) AGAINST(? IN BOOLEAN MODE) 
+  ORDER BY skorcari DESC LIMIT 100
+  ";
+  $stmt = $db->prepare($qry);
+  $stmt->bind_param('ss',$pq1,$pq2);
+  $pq1 = $gi->fullTextQuery($_POST['searchq'],true);
+  $pq2 = $gi->fullTextQuery($_POST['searchq']);
+  $stmt->execute();
+  $hs = $stmt->get_result();
+}
+
 
 $produk = [];
 

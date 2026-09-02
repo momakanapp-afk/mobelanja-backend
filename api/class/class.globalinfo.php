@@ -179,40 +179,38 @@ class globalInfo
     return $reo;
   }
 
-
-
-  /**  
-   * MULTI DATABASE SUPPORTING 2022-07-18 
-   * Penambahan koneksi mengacu pada modul EXTRA > DB Connection
-   */
-  public function getMysqli_ID($iddb) 
+  public function fullTextQuery($input,$full=false) 
   {
-    $db = $this->getviconn(1);
-    $db->busyTimeout(5000);
+    // 1. Hapus karakter khusus yang bisa mengganggu Boolean Mode (+, -, <, >, ( ), ~, ")
+    //   sisakan Alfanumerik dan Spasi
+    $cleanInput = preg_replace('/[^\p{L}\p{N}\s]/u', '', $input);
 
-    $qry = "SELECT * FROM varinfo WHERE varname IN(
-      'serverhost_$iddb','serveruser_$iddb','serverpww_$iddb','dbname_$iddb')";
-    $pqr = $db->query($qry); $mycred=[];
-    while ($R = $pqr->fetchArray(SQLITE3_ASSOC))
-    {
-      $mycred[$R['varname']] = openssl_decrypt($R['val'],'aes-128-cfb',$this->APPID,0,$R['iv']);
+    // 2. Hilangkan spasi ganda dan trim
+    $cleanInput = trim(preg_replace('/\s+/', ' ', $cleanInput));
+
+    // 3. Jika len input lebih kecil dari 3 karakter setelah dibersihkan, kembalikan null
+    if (strlen($cleanInput) < 3) return null;
+
+    // 4. Pecah dan tambahkan wildcard * di setiap kata 
+    if (strpos($cleanInput,' ')!==false) {
+      $words = explode(' ', $cleanInput);
+      $arword = array_map(function($w) {return "{$w}*";}, $words);
+      $wildcarded = implode(' ', $arword);
+
+      // Tambahkan frasa utuh (priority)
+      if ($full) {
+        return '+"'.$cleanInput.'" '.$wildcarded;
+      }
+      else {
+        return $wildcarded;
+      }
     }
-    $db->close();
-
-    // Matikan warning error connection 
-    error_reporting(E_ERROR); $pref = '_'.$iddb;
-    $cnn = new mysqli(
-      $mycred['serverhost_'.$iddb], 
-      $mycred['serveruser_'.$iddb], 
-      $mycred['serverpww_'.$iddb], 
-      $mycred['dbname_'.$iddb]
-    );
-    if ($cnn->connect_errno) {
-      exit("Koneksi Database Error");
-    } else {
-      return $cnn;
+    else {
+      return $cleanInput.'*';
     }
   }
+
+
 }
 
 ?>
