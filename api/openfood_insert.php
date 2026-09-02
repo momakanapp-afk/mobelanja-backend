@@ -9,12 +9,9 @@ $db = $gi->getMysqli();
 
 // Daftar barcode yang ingin di insert
 $barcodes = [
-  "8994171102477",
-  "8992933236118",
-  "8992741906265",
-  "8997014450216",
-  "8993200668861",
-  "8992772586016",
+  "8992933237115",
+  "8997004306103",
+  "089686060744",
 ];
 
 $products = $bulkService->getProductsByBarcodes($barcodes);

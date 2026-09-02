@@ -1,0 +1,25 @@
+
+KETENTUAN SERVER PHP LOKAL UNTUK API 
+
+1. Emulator tidak bisa membaca localhost dan semacamnya karena 
+   berarti itu merujuk pada device emulator itu sendiri 
+
+2. Emulator tidak peduli dengan cerificate https lokal buatan sendiri
+   jadi segala usaha membuat https tidak akan terjangkau network
+
+3. Satu satunya jalan agar server lokal bisa dibaca adalah melalui 
+   IP Network yang sama dengan Metro Bundler. IP ini akan muncul 
+   setelah menjalankan npx expo start --android 
+
+4 Untuk itu saya membuat file Server.bat yang akan menjalankan php 
+  built-in server langsung ke direktori api dan langsung ke 
+  IP PC beserta port uniknya. 
+
+5. Selalui perbarui IP jika IP dari metro bundler berubah. 
+
+** IP Network yg sama dengan expo ini juga bisa membuat backend diakses 
+   lewat expo go di perangkat fisik android, supaya tidak perlu memakai 
+   emulator lagi di layar laptop yang bikin ribet
+
+** PHP yang sudah memakai XDebug bisa digunakan melalui Listen XDebug
+   di VSCode. Ini adalah fitur yang sangat berguna

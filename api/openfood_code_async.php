@@ -92,9 +92,7 @@ class OpenFoodFactsBulkService
 $bulkService = new OpenFoodFactsBulkService('id');
 
 $barcodes = [
-    '8991002101630',
-    '8997025914042',
-    '8992933465112',
+  "8997004306103",
 ];
 
 $products = $bulkService->getProductsByBarcodes($barcodes);
