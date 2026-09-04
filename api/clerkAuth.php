@@ -46,6 +46,7 @@ EOD;
         // Jika tidak ada header Authorization atau format bukan 'Bearer <token>'
         if (!$authHeader || !preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
             self::sendError(401, 'Authorization token tidak ditemukan');
+            exit;
         }
 
         $jwt = $matches[1];

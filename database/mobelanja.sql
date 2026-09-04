@@ -93,6 +93,7 @@ CREATE TABLE IF NOT EXISTS `CartItem` (
   `Cart_id` BIGINT UNSIGNED NOT NULL,
   `Product_id` BIGINT UNSIGNED NOT NULL,
   `quantity` INT DEFAULT 1,
+  `timestamps` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`_id`),
   KEY `citm_cri` (Cart_id),
   KEY `citm_pdi` (Product_id)

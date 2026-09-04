@@ -1,21 +1,18 @@
 <?php
 
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Authorization");
-header("Content-Type: application/json; charset=UTF-8");
+include __DIR__.'/header_cors.php';
 
-// Tangani permintaan HTTP OPTIONS (Preflight)
-if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit();
-}
+require_once __DIR__ . '/vendor/autoload.php';
 
 require_once __DIR__ . '/ClerkAuth.php';
 include_once __DIR__ . '/class/class.globalinfo.php';
 
+
 $gi = new globalInfo();
 $db = $gi->getMysqli();
+
+use Sqids\Sqids;
+$sqids = new Sqids(minLength: 10, alphabet:"iwf2UnDlRmsKSI0XTxqMvZ84y1EWkVrejzGhNAY9pFPbCQ37gJodOtcLH56aBu");
 
 // 1. Jalankan verifikasi
 // Jika token invalid/missing, script langsung mati dan me-return HTTP 401 otomatis
@@ -27,21 +24,36 @@ $clerkUserId = $userToken->sub;  // Subject ID unik dari Clerk (contoh: "user_2N
 // SUCCESS TEST !
 // user_3IZkCyaT8suoAKJYva3hEOsPlsA
 
+$formatRp = function($nomi) {
+  $nfo = 'Rp.'. number_format($nomi,0,',','.');
+  return $nfo;
+};
+
 // Dipanggil dengan POST 
 $rawInput = file_get_contents('php://input');
 $_POST = json_decode($rawInput, true);
 
+$colSel = "_id,name,description,price,stock,category,images,averageRating,totalReviews";
+
 if (!isset($_POST['searchq'])) {
   // Ambil 100 data terbaru
-  $qry = 'SELECT * FROM product ORDER BY _id DESC LIMIT 100';
-  $hs = $db->query($qry);
+  $qry = "
+    SELECT $colSel 
+    FROM product 
+    ORDER BY _id DESC LIMIT 100
+  ";
+  $stmt = $db->prepare($qry);
+  $stmt->execute();
+  $stmt->bind_result(
+    $idprod,$name,$desc,$price,$stock,$kateg,$img,$rating,$review
+  );
 }
 else {
   // Pencarian fulltext index 
   $qry = "
-  SELECT p.*, 
-  MATCH(name,description,category) AGAINST(? IN BOOLEAN MODE) AS skorcari 
-  FROM product AS p 
+  SELECT $colSel , 
+    MATCH(name,description,category) AGAINST(? IN BOOLEAN MODE) AS skorcari 
+  FROM product 
   WHERE MATCH(name,description,category) AGAINST(? IN BOOLEAN MODE) 
   ORDER BY skorcari DESC LIMIT 100
   ";
@@ -50,30 +62,28 @@ else {
   $pq1 = $gi->fullTextQuery($_POST['searchq'],true);
   $pq2 = $gi->fullTextQuery($_POST['searchq']);
   $stmt->execute();
-  $hs = $stmt->get_result();
+  $stmt->bind_result(
+    $idprod,$name,$desc,$price,$stock,$kateg,$img,$rating,$review,$skor
+  );
 }
 
 
 $produk = [];
 
-$formatRp = function($nomi) {
-  $nfo = 'Rp.'. number_format($nomi,0,',','.');
-  return $nfo;
-};
-
-while ($row = $hs->fetch_assoc()) {
+while ($stmt->fetch()) {
   $produk[] = [
-    '_id' => $row['_id'],
-    'name' => $row['name'],
-    'description' => $row['description'],
-    'price' => $formatRp($row['price']),
-    'stock' => $row['stock'],
-    'category' => $row['category'],
-    'images' => [$row['images']],
-    'averageRating' => $row['averageRating'],
-    'totalReviews' => $row['totalReviews'],
+    '_id' => $sqids->encode([$idprod]),
+    'name' => $name,
+    'description' => $desc,
+    'price' => $formatRp($price),
+    'stock' => $stock,
+    'category' => $kateg,
+    'images' => [$img],
+    'averageRating' => $rating,
+    'totalReviews' => $review,
   ];
 }
+$stmt->close();
 
 echo json_encode($produk);
 exit();
