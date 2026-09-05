@@ -22,7 +22,7 @@ $clerkUserId = $userToken->sub;  // Subject ID unik dari Clerk
 $rawInput = file_get_contents('php://input');
 $_POST = json_decode($rawInput, true);
 
-$getOutputData = function() use ($db,$sqids,$clerkUserId) {
+$getOutputData = function() use ($db,$sqids,$clerkUserId,$formatRp) {
   // Fungsi Muktahir JSON dari mariaDB
   // JSON_ARRAYAGG,JSON_ARRAY,JSON_OBJECT
   $qry = "
@@ -38,7 +38,8 @@ $getOutputData = function() use ($db,$sqids,$clerkUserId) {
         'image', p.images
       )
     )
-  ) AS items
+  ) AS items, 
+    COALESCE(SUM(ci.quantity*p.price),0) AS subtotal 
   FROM cart AS c
   JOIN cartitem AS ci ON ci.Cart_id = c._id 
   JOIN product AS p ON ci.Product_id = p._id
@@ -49,7 +50,7 @@ $getOutputData = function() use ($db,$sqids,$clerkUserId) {
   $stmt = $db->prepare($qry);
   $stmt->bind_param('s',$clerkUserId);
   $stmt->execute();
-  $stmt->bind_result($idCart,$itemsCart);
+  $stmt->bind_result($idCart,$itemsCart,$subTotal);
   $stmt->fetch();
 
   $outputCart = [];
@@ -62,32 +63,37 @@ $getOutputData = function() use ($db,$sqids,$clerkUserId) {
       '_id'=>$sqids->encode([$idCart]),
       'clerkId'=> $clerkUserId,
       'items'=>$items,
+      'subTotal'=>$subTotal
     ];
   }
 
   return $outputCart;
 };
 
+
 // Handle payloads
 if (in_array($sendMethod,['POST','PUT','DELETE'])) {
   $rawInput = file_get_contents('php://input');
   $_POST = json_decode($rawInput, true);
-  $decId = $sqids->decode($_POST['id']);
-  if (empty($decId)) {
-    echo json_encode(['cart'=>$getOutputData()]);
-    exit;
+  $productId = "";
+  if (is_string($_POST['id'])) {
+    $decId = $sqids->decode($_POST['id']);
+    if (empty($decId)) {
+      echo json_encode(['cart'=>$getOutputData()]);
+      exit;
+    }
+    $productId = $decId[0];
   }
-  $productId = $decId[0];
 }
 
 // Hanya ambil data
 if ($sendMethod==="GET") 
 {
-  echo json_encode(['cart'=>$getOutputData()]);
+
 }
 
 // Save Item to Cart
-if ($sendMethod==="POST") 
+if ($sendMethod==="POST" && $_POST['act']==='addCart') 
 {
   // Cek di cart 
   $stmt = $db->prepare("
@@ -128,8 +134,6 @@ if ($sendMethod==="POST")
   $stmt->execute();
   $stmt->close();
 
-  echo json_encode(['cart'=>$getOutputData()]);
-
 }
 
 // Delete cart item
@@ -147,10 +151,9 @@ if ($sendMethod==="DELETE")
   $stmt->execute();
   $stmt->close();
 
-  echo json_encode(['cart'=>$getOutputData()]);
 }
 
-if ($sendMethod==="DELETE") 
+if ($sendMethod==="PUT") 
 {
   $qry = "
   UPDATE cartitem SET quantity = ? 
@@ -159,9 +162,62 @@ if ($sendMethod==="DELETE")
   )
   ";
   $stmt = $db->prepare($qry);
-  $stmt->bind_param('is',$productId,$clerkUserId);
+  $stmt->bind_param('iss',$_POST['qty'],$productId,$clerkUserId);
   $stmt->execute();
   $stmt->close();
+}
+
+// Sinkron Payload
+if ($sendMethod==="POST" && $_POST['act']==='syncCart') 
+{
+  $dataCart = $_POST['cartlist'];
+  if (is_array($dataCart)) 
+  {
+    $db->begin_transaction();
+    $db->query("CREATE TEMPORARY TABLE tmp_cartitem LIKE cartitem ");
+    $stmt = $db->prepare("
+    INSERT INTO tmp_cartitem (_id,Product_id,quantity) 
+    VALUES (?,?,?)
+    ");
+    $stmt->bind_param('iii',$pid,$ppi,$pqt);
+    foreach ($dataCart as $item)
+    {
+      $pid = $item['_id'];
+      $decId = $sqids->decode($item['product']['_id']);
+      $ppi = $decId[0];
+      $pqt = $item['quantity'];
+
+      $stmt->execute();
+    }
+    $stmt->close();
+
+    // Update batch 
+    $qry = "
+    UPDATE cartitem AS c 
+    JOIN tmp_cartitem AS t ON c._id = t._id
+    SET c.quantity = t.quantity
+    ";
+    $db->query($qry);
+
+    // Delete batch
+    $qry = "
+    DELETE c 
+    FROM cartitem c 
+    LEFT JOIN tmp_cartitem t ON c._id = t._id 
+    WHERE t._id IS NULL
+    ";
+    $db->query($qry);
+
+    $db->commit();
+    $db->query("DROP TEMPORARY TABLE tmp_cartitem");
+  }
+}
+
+
+
+// Handle result 
+if (in_array($sendMethod,['GET','POST','PUT','DELETE'])) {
+  echo json_encode(['cart'=>$getOutputData()]);
 }
 
 
