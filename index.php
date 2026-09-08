@@ -1,6 +1,6 @@
 <?php 
 
-echo "API Root MoBelanja";
+echo "API Root MoBelanja \n";
 
 /**
  * EKSPERIMEN

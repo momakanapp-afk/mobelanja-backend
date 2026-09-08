@@ -21,8 +21,9 @@ CREATE TABLE IF NOT EXISTS `Address` (
   `fullName` VARCHAR(255) NOT NULL,
   `streetAddress` VARCHAR(255) NOT NULL,
   `city` VARCHAR(255) NOT NULL,
-  `state` CHAR(100) NOT NULL,
-  `geoloc` VARCHAR(255) NOT NULL,
+  `state` CHAR(100) DEFAULT 'ID',
+  `geo_lat` DECIMAL(11,8),
+  `geo_long` DECIMAL(11,8),
   `zipCode`  CHAR(50) NOT NULL,
   `phoneNumber`  CHAR(100) NOT NULL,
   `isDefault` BOOLEAN DEFAULT FALSE,
@@ -82,8 +83,10 @@ DROP TABLE IF EXISTS `Cart`;
 CREATE TABLE IF NOT EXISTS `Cart` (
   `_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `clerkId` VARCHAR(255) NOT NULL,
+  `Toko_id` INT UNSIGNED DEFAULT NULL,
   `timestamps` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`_id`),
+  KEY crt_tid (`Toko_id`),
   UNIQUE KEY crt_cid (clerkId)
 ) ENGINE=InnoDB;
 
