@@ -6,8 +6,11 @@ CREATE TABLE IF NOT EXISTS `User` (
   `clerkId` VARCHAR(255) NOT NULL,
   `email` VARCHAR(255) NOT NULL,
   `name` CHAR(200) NOT NULL,
+  `facebook` CHAR(200) DEFAULT NULL,
+  `kontak` CHAR(200) DEFAULT NULL,
+  `kotakab` CHAR(200) DEFAULT NULL,
   `imageUrl`VARCHAR(1000) DEFAULT NULL,
-  `stripeCustomerId`VARCHAR(255) NOT NULL,
+  `stripeCustomerId`VARCHAR(255) DEFAULT NULL,
   `timestamps` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`_id`),
   UNIQUE KEY usr_cid (clerkId)
@@ -28,7 +31,7 @@ CREATE TABLE IF NOT EXISTS `Address` (
   `phoneNumber`  CHAR(100) NOT NULL,
   `isDefault` BOOLEAN DEFAULT FALSE,
   PRIMARY KEY (`_id`),
-  UNIQUE KEY adrs_cid (clerkId)
+  KEY adrs_cid (clerkId)
 ) ENGINE=InnoDB;
 
 DROP TABLE IF EXISTS `Wishlist`;
@@ -38,7 +41,7 @@ CREATE TABLE IF NOT EXISTS `Wishlist` (
   `Product_id` BIGINT UNSIGNED NOT NULL,
   `timestamps` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`_id`),
-  UNIQUE KEY wsh_cid (clerkId),
+  KEY wsh_cid (clerkId),
   KEY wsh_pid (Product_id)
 ) ENGINE=InnoDB;
 
@@ -74,7 +77,7 @@ CREATE TABLE IF NOT EXISTS `Toko` (
   `desc` TEXT NOT NULL,
   `timestamps` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`_id`),
-  UNIQUE KEY tko_cid (clerkId),
+  KEY tko_cid (clerkId),
   FULLTEXT `tko_f_ndc` (`name`, `desc`)
 ) ENGINE=InnoDB;
 
@@ -87,7 +90,7 @@ CREATE TABLE IF NOT EXISTS `Cart` (
   `timestamps` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`_id`),
   KEY crt_tid (`Toko_id`),
-  UNIQUE KEY crt_cid (clerkId)
+  KEY crt_cid (clerkId)
 ) ENGINE=InnoDB;
 
 DROP TABLE IF EXISTS `CartItem`;
