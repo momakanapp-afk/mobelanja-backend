@@ -14,6 +14,8 @@
     return false;
   }
 
+  $lastname = (isset($userToken->lastname)) ? $userToken->lastname : '';
+
   // Add user 
   $qry = "
   INSERT INTO user (clerkId,email,name,imageUrl) 
@@ -22,7 +24,7 @@
   $ival = [
     $clerkUserId,
     $userToken->email,
-    $userToken->firstname.' '.$userToken->lastname,
+    $userToken->firstname.' '.$lastname,
     $userToken->image
   ];
   $db->execute_query($qry,$ival);

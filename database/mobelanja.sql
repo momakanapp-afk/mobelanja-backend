@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS `User` (
   `kotakab` CHAR(200) DEFAULT NULL,
   `imageUrl`VARCHAR(1000) DEFAULT NULL,
   `stripeCustomerId`VARCHAR(255) DEFAULT NULL,
-  `timestamps` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `timestamps` TIMESTAMP DEFAULT UTC_TIMESTAMP(),
   PRIMARY KEY (`_id`),
   UNIQUE KEY usr_cid (clerkId)
 ) ENGINE=InnoDB;
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS `Wishlist` (
   `_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `clerkId` VARCHAR(255) NOT NULL,
   `Product_id` BIGINT UNSIGNED NOT NULL,
-  `timestamps` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `timestamps` TIMESTAMP DEFAULT UTC_TIMESTAMP(),
   PRIMARY KEY (`_id`),
   KEY wsh_cid (clerkId),
   KEY wsh_pid (Product_id)
@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS `Product` (
   `images` VARCHAR(1000) DEFAULT NULL,
   `averageRating` DECIMAL(3,2) DEFAULT 0,
   `totalReviews` DECIMAL(10,0) DEFAULT 0,
-  `timestamps` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `timestamps` TIMESTAMP DEFAULT UTC_TIMESTAMP(),
   PRIMARY KEY (`_id`),
   KEY `pid_tid` (`Toko_id`) ,
   KEY `pid_brc` (`barcode`) ,
@@ -72,13 +72,35 @@ CREATE TABLE IF NOT EXISTS `Toko` (
   `_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `clerkId` VARCHAR(255) NOT NULL,
   `name` VARCHAR(255) NOT NULL,
-  `kotakab` VARCHAR(255) NOT NULL,
-  `geoloc` VARCHAR(255) NOT NULL,
+  `kotakab` CHAR(80) NOT NULL,
+  `alamat` VARCHAR(255) NOT NULL,
+  `kodepos` CHAR(20) NOT NULL,
+  `website` VARCHAR(255) DEFAULT NULL,
+  `imageurl` VARCHAR(255) DEFAULT NULL,
+  `facebook` CHAR(100) DEFAULT NULL,
+  `instagram` CHAR(100) DEFAULT NULL,
+  `kontak` CHAR(100) NOT NULL,
+  `geo_lat` DECIMAL(11,8) DEFAULT 0,
+  `geo_long` DECIMAL(11,8) DEFAULT 0,  
   `desc` TEXT NOT NULL,
-  `timestamps` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `pintoko` CHAR(10) DEFAULT NULL,
+  `pinjoin` VARCHAR(255) DEFAULT NULL,
+  `timestamps` TIMESTAMP DEFAULT UTC_TIMESTAMP(),
   PRIMARY KEY (`_id`),
   KEY tko_cid (clerkId),
-  FULLTEXT `tko_f_ndc` (`name`, `desc`)
+  KEY tko_pnt (pintoko),
+  FULLTEXT `tko_f_ndc` (`name`, `desc`,`website`,`facebook`,`instagram`)
+) ENGINE=InnoDB;
+
+-- Afiliasi / Reseller : Multi admin pengelola toko
+DROP TABLE IF EXISTS `Toko_grup`;
+CREATE TABLE IF NOT EXISTS `Toko_grup` (
+  `_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `Toko_id` BIGINT UNSIGNED NOT NULL,
+  `clerkId` VARCHAR(255) NOT NULL,
+  PRIMARY KEY (`_id`),
+  KEY tkg_cid (clerkId),
+  KEY tkg_tid (Toko_id)
 ) ENGINE=InnoDB;
 
 
@@ -87,7 +109,7 @@ CREATE TABLE IF NOT EXISTS `Cart` (
   `_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `clerkId` VARCHAR(255) NOT NULL,
   `Toko_id` INT UNSIGNED DEFAULT NULL,
-  `timestamps` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `timestamps` TIMESTAMP DEFAULT UTC_TIMESTAMP(),
   PRIMARY KEY (`_id`),
   KEY crt_tid (`Toko_id`),
   KEY crt_cid (clerkId)
@@ -99,7 +121,7 @@ CREATE TABLE IF NOT EXISTS `CartItem` (
   `Cart_id` BIGINT UNSIGNED DEFAULT NULL,
   `Product_id` BIGINT UNSIGNED NOT NULL,
   `quantity` INT DEFAULT 1,
-  `timestamps` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `timestamps` TIMESTAMP DEFAULT UTC_TIMESTAMP(),
   PRIMARY KEY (`_id`),
   KEY `citm_cri` (Cart_id),
   KEY `citm_pdi` (Product_id)
