@@ -19,7 +19,7 @@ $sqids = new Sqids(minLength: 10, alphabet:"iwf2UnDlRmsKSI0XTxqMvZ84y1EWkVrejzGh
 $userToken = ClerkAuth::authenticate();
 
 // // 2. Ambil data dari payload JWT jika token VALID
-$clerkUserId = $userToken->sub;  // Subject ID unik dari Clerk (contoh: "user_2N...")
+$clerkUserId = $userToken->sub; 
 
 // SUCCESS TEST !
 // user_3IZkCyaT8suoAKJYva3hEOsPlsA
@@ -40,7 +40,8 @@ if (!isset($_POST['searchq'])) {
   $qry = "
     SELECT $colSel 
     FROM product 
-    ORDER BY _id DESC LIMIT 100
+    WHERE aktif = TRUE 
+    ORDER BY _id DESC LIMIT 25
   ";
   $stmt = $db->prepare($qry);
   $stmt->execute();
@@ -55,6 +56,7 @@ else {
     MATCH(name,description,category) AGAINST(? IN BOOLEAN MODE) AS skorcari 
   FROM product 
   WHERE MATCH(name,description,category) AGAINST(? IN BOOLEAN MODE) 
+    AND aktif = TRUE
   ORDER BY skorcari DESC LIMIT 100
   ";
   $stmt = $db->prepare($qry);
@@ -71,6 +73,8 @@ else {
 $produk = [];
 
 while ($stmt->fetch()) {
+  // Tipe kolom json
+  $img_a = json_decode($img,true);
   $produk[] = [
     '_id' => $sqids->encode([$idprod]),
     'name' => $name,
@@ -78,7 +82,7 @@ while ($stmt->fetch()) {
     'price' => $formatRp($price),
     'stock' => $stock,
     'category' => $kateg,
-    'images' => [$img],
+    'images' => $img_a,
     'averageRating' => $rating,
     'totalReviews' => $review,
   ];

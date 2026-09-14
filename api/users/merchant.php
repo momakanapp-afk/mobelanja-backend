@@ -21,6 +21,7 @@ $clerkUserId = $userToken->sub;
 $rawInput = file_get_contents('php://input');
 $_POST = json_decode($rawInput, true);
 
+// Deret kolom ini hanya untuk GET API (tidak dipakai oleh POST)
 $postcol = "imageUrl,name,desc,kotakab,alamat,kodepos,kontak,geolokasi";
 $postcol_a = explode(",",$postcol);
 
@@ -36,6 +37,8 @@ if ($hs->num_rows > 0) {
     }
   $geo = $row['geo_lat'] > 0 ? "" : $row['geo_lat'].', '.$row['geo_long'];
   $merdata['geolokasi'] = $geo;
+  // Encode id 
+  $merdata['_id'] = $sqids->encode([$row['_id']]);
   // Proses timestamp 
   $date = new DateTime($row['timestamps'], new DateTimeZone('UTC'));
   $date->setTimezone(new DateTimeZone('Asia/Jakarta'));
@@ -45,22 +48,6 @@ if ($hs->num_rows > 0) {
 if ($sendMethod==="GET")
 {
   echo json_encode(['mdata'=>$merdata]);
-}
-
-if ($sendMethod==="POST" && $_POST['act']==='saveImageUrl') 
-{
-  $newUrl = $_POST['urlimg'];
-
-  # Update image url 
-  $qry = "
-  UPDATE toko SET imageUrl = ? 
-  WHERE clerkId = ?
-  ";
-  $db->execute_query($qry,[$newUrl,$clerkUserId]);
-  $success = ($db->affected_rows > 0) ? true : false;
-
-  echo json_encode(['isSuccess'=>$success,'imgUrl'=>$newUrl]);
-  exit();
 }
 
 if ($sendMethod==="POST") 
@@ -79,17 +66,19 @@ if ($sendMethod==="POST")
 
   $postcol = array_keys($formData); 
   $postcol = array_merge($postcol,["imageurl","clerkId","geo_lat","geo_long"]);
-  // Tambahkan aphostrope 
+  // Tambahkan column aphostrope (Error reserved name mariaDB)
   $postcol_fix = array_map(function($item){return '`'.$item.'`';},$postcol);
   $inscol = implode(",",$postcol_fix);
   $postdata = array_values($formData); 
   $postdata = array_merge($postdata,[$imageURL,$clerkUserId,$geo_lat,$geo_long]);
   $ttny = implode(',', array_fill(0, count($postcol), '?'));
 
+  // +++ SAVE NEW DATA (TOKO BARU)
   if ($_POST['act']==='newForm') {
     $qry = "INSERT INTO toko ({$inscol}) VALUES ($ttny)";
     $db->execute_query($qry,$postdata);
   }
+  // +++ UPDATE DATA TOKO
   else if ($_POST['act']==='editForm') {
     // Susun SET
     $setupd = [];

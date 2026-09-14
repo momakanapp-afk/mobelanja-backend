@@ -35,7 +35,7 @@ $getOutputData = function() use ($db,$sqids,$clerkUserId,$formatRp) {
         '_id', p._id,
         'name', p.name,
         'price', p.price,
-        'image', p.images
+        'image', JSON_EXTRACT(p.images, '$[0]')
       )
     )
   ) AS items, 
@@ -217,7 +217,8 @@ if ($sendMethod==="POST" && $_POST['act']==='syncCart')
 
 // Handle result 
 if (in_array($sendMethod,['GET','POST','PUT','DELETE'])) {
-  echo json_encode(['cart'=>$getOutputData()]);
+  $ouData = $getOutputData();
+  echo json_encode(['cart'=>$ouData]);
 }
 
 

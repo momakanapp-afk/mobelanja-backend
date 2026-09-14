@@ -60,9 +60,11 @@ CREATE TABLE IF NOT EXISTS `Product` (
   `averageRating` DECIMAL(3,2) DEFAULT 0,
   `totalReviews` DECIMAL(10,0) DEFAULT 0,
   `timestamps` TIMESTAMP DEFAULT UTC_TIMESTAMP(),
+  `aktif` BOOLEAN DEFAULT TRUE,
   PRIMARY KEY (`_id`),
   KEY `pid_tid` (`Toko_id`) ,
   KEY `pid_brc` (`barcode`) ,
+  KEY `pid_akt` (`aktif`) ,
   FULLTEXT `pid_f_ndc` (`name`,`description`,`category`)
 ) ENGINE=InnoDB;
 
