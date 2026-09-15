@@ -1,0 +1,4 @@
+Hostname:localhost
+Database:cvsayape_mobelanja
+Username:cvsayape_mobelanja
+Password:5kdYqZNCFLWerpMFZLjP

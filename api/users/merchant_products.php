@@ -46,7 +46,8 @@ $getJsonData = function($limit=25,$idprod='') use ($db,$sqids,$clerkUserId) {
     SELECT * FROM product 
     WHERE Toko_id = (
       SELECT _id FROM toko WHERE clerkId = ?
-    ) AND aktif = TRUE $qid
+    ) AND aktif = TRUE $qid 
+    ORDER BY _id DESC
     LIMIT $limit
   ";
   $hs = $db->execute_query($qry,[$clerkUserId]);
@@ -94,8 +95,88 @@ if ($sendMethod==="POST" && $_POST['act']==='delete') {
 # SAVE / UPDATE PRODUCT
 if ($sendMethod==="POST" && $_POST['act']==='saveData') {
   $ProductData = $_POST['data'];
-  // Jika _id di payload koosong -> Insert New 
-  
+  $idForm = $ProductData['_id'];
+  // Hapus _id 
+  unset($ProductData['_id']);
+  // Ekstrak kolom tambahkan aphostrope
+  $postcol_a = array_map(function($item) {
+    return "`{$item}`";
+  },array_keys($ProductData));
+  $postcol = implode(',',$postcol_a);
+
+  // Proses Toko_id
+  $decTokoId = $sqids->decode($_POST['id_toko']);
+  if (!isset($decTokoId[0])) {
+    echo json_encode(['isSuccess'=>false]);
+    exit();
+  }
+  $TokoID = $decTokoId[0];
+
+  # ++++++++ INSERT NEW -> Jika _id di payload kosong 
+  if ($idForm==='') 
+  {
+    $ttny = str_repeat('?,',count($postcol_a)) .'?'; // last '?' untuk toko_id
+    // Produk baru images hanya dari imgUpl
+    $jsonImages = json_encode($_POST['imgUpl']);
+    // replace images dengan string json (kolom tipe json)
+    $ProductData['images'] = $jsonImages;
+    // Ekstrak values untuk query
+    $valQry = array_values($ProductData);
+    // Tambahkan id toko
+    $postcol .= ',`Toko_id`';
+    $valQry[] = $TokoID;
+
+    $qry = "
+    INSERT INTO product ($postcol) 
+    VALUES ($ttny)
+    ";
+    $db->execute_query($qry,$valQry);
+    $sukses = ($db->affected_rows > 0) ? true : false;
+
+    echo json_encode(['isSuccess'=>$sukses]);
+
+  }
+
+    # ++++++++ UPDATE ITEM
+  if ($idForm!=='') 
+  {
+    // Decode id
+    $decId = $sqids->decode($idForm);
+    if (!is_array($decId)) {
+      echo json_encode(['isSuccess'=>false]);
+    }
+    $IDPROD = $decId[0];
+    // Susun SET 
+    $setQry_a=[];
+    foreach($postcol_a as $col) {
+      $setQry_a[] = "{$col}=?";
+    }
+    $setQry = implode(",",$setQry_a);
+    // Terapkan deleted images terhadap prev images
+    foreach ($ProductData['images'] as $ked=>$vde) {
+      if (in_array($vde,$_POST['imgDeleted'])) {
+        unset($ProductData['images'][$ked]);
+      }
+    }
+    // Gabungkan array prev dengan uploaded image 
+    $JoinImage = array_merge($ProductData['images'],$_POST['imgUpl']);
+    $JJoinImage = json_encode($JoinImage);
+    // ubah images ke json
+    $ProductData['images'] = $JJoinImage;
+    // Ekstrak values
+    $valQry = array_values($ProductData);
+    // Tambahkan Where product._id 
+    $valQry[] = $IDPROD;
+
+    $qry = "
+    UPDATE product SET $setQry 
+    WHERE _id = ?
+    ";
+    $db->execute_query($qry,$valQry);
+    $sukses = ($db->affected_rows > 0) ? true : false;
+
+    echo json_encode(['isSuccess'=>$sukses]);
+  }
 }
 
 
